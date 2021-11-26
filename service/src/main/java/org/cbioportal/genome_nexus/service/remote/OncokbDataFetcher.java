@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -49,7 +50,17 @@ public class OncokbDataFetcher extends BaseExternalResourceFetcher<IndicatorQuer
     public List<IndicatorQueryResp> fetchInstances(Map<String, String> queryParams)
         throws HttpClientErrorException, ResourceAccessException, ResourceMappingException
     {
-        return this.transformer.transform(this.fetchRawValue(queryParams), IndicatorQueryResp.class);
+
+        DBObject obj = this.fetchRawValue(queryParams);
+        obj.removeField("query");
+        obj.put("highestDiagnosticImplicationLevel", ((String)obj.get("highestDiagnosticImplicationLevel")).toUpperCase(Locale.ROOT));
+        ((List<Map<String, Object>>)obj.get("diagnosticImplications")).stream().forEach(diagnosticImplication -> {
+            diagnosticImplication.put("levelOfEvidence", ((String)diagnosticImplication.get("levelOfEvidence")).toUpperCase(Locale.ROOT));
+            diagnosticImplication.remove("pmids");
+            diagnosticImplication.remove("abstracts");
+        });
+
+        return this.transformer.transform(/*this.fetchRawValue(queryParams)*/obj, IndicatorQueryResp.class);
     }
 
     @Override
@@ -103,10 +114,10 @@ public class OncokbDataFetcher extends BaseExternalResourceFetcher<IndicatorQuer
     protected DBObject postForObject(String uri, Object requestBody)
     {
 
-        HttpHeaders httpHeaders = new HttpHeaders();        
+        HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + this.oncokbToken);
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);      
-        
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> request = new HttpEntity<String>(requestBody.toString(), httpHeaders);
         return restTemplate.postForObject(uri, request, BasicDBObject.class);

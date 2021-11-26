@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Base abstract implementation of ExternalResourceFetcher.
@@ -20,6 +21,8 @@ import java.util.Map;
  */
 public abstract class BaseExternalResourceFetcher<T> implements ExternalResourceFetcher<T>
 {
+    private static Logger log = Logger.getLogger(String.valueOf(BaseExternalResourceFetcher.class));
+
     protected String URI;
     protected String mainQueryParam;
     protected String placeholder;
@@ -53,6 +56,8 @@ public abstract class BaseExternalResourceFetcher<T> implements ExternalResource
             uri = uri.replace(this.placeholder, paramValue);
         }
 
+        log.info(String.format("GET [%s] ==> %s", this.URI, paramValue));
+
         return this.getForObject(uri, queryParams);
     }
 
@@ -70,6 +75,8 @@ public abstract class BaseExternalResourceFetcher<T> implements ExternalResource
     public DBObject fetchRawValue(Object requestBody)
         throws HttpClientErrorException, ResourceAccessException
     {
+        log.info(String.format("POST [%s] ==> %s", this.URI, ((Map<String, String>)requestBody).toString()));
+
         return this.postForObject(this.URI, requestBody);
     }
 

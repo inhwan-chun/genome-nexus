@@ -9,6 +9,7 @@ import org.cbioportal.genome_nexus.service.mixin.my_variant_info_mixin.AlleleCou
 import org.cbioportal.genome_nexus.service.mixin.my_variant_info_mixin.AlleleFrequencyMixin;
 import org.cbioportal.genome_nexus.service.mixin.my_variant_info_mixin.AlleleNumberMixin;
 import org.cbioportal.genome_nexus.service.mixin.my_variant_info_mixin.HomozygotesMixin;
+import org.oncokb.client.IndicatorQueryResp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,8 @@ public class ApiObjectMapper extends ObjectMapper
         mixinMap.put(StatsByTumorType.class, StatsByTumorTypeMixin.class);
         mixinMap.put(SignalPopulationStats.class, SignalPopulationStatsMixin.class);
         mixinMap.put(HrdScore.class, HrdScoreMixin.class);
+        // oncokb
+        mixinMap.put(IndicatorQueryResp.class, IndicatorQueryRespMixin.class);
         super.setMixIns(mixinMap);
     }
 }

@@ -14,6 +14,7 @@ import org.cbioportal.genome_nexus.service.mixin.*;
 
 import org.cbioportal.genome_nexus.service.mixin.my_variant_info_mixin.*;
 
+import org.oncokb.client.IndicatorQueryResp;
 import org.springframework.stereotype.Component;
 
 @Component("defaultExternalResourceObjectMapper")
@@ -53,6 +54,8 @@ public class ExternalResourceObjectMapper extends ObjectMapper
         mixinMap.put(Homozygotes.class, HomozygotesMixin.class);
         mixinMap.put(AlleleFrequency.class, AlleleFrequencyMixin.class);
         mixinMap.put(IntergenicConsequences.class, IntergenicConsequencesMixin.class);
+        //oncokb 추가 필요
+        mixinMap.put(IndicatorQueryResp.class, IndicatorQueryRespMixin.class);
         super.setMixIns(mixinMap);
     }
 }

@@ -36,7 +36,15 @@ public class OncokbServiceImpl implements OncokbService {
 
     public IndicatorQueryResp getOncokbByProteinChange(Alteration alteration, String token) throws OncokbNotFoundException, OncokbWebServiceException {
         Optional<IndicatorQueryResp> oncokb = null;
-        
+        LOG.info("[OncoKB token] => "+token);
+        LOG.info(alteration.getAlteration()+","+
+            alteration.getConsequence()+","+
+            alteration.getHugoSymbol()+","+
+            alteration.getTumorType()+","+
+            alteration.getEntrezGeneId()+","+
+            alteration.getProteinStart()+","+
+            alteration.getProteinEnd()
+        );
         oncokbDataFetcher.setOncokbToken(token);
         try {
             // get the annotation from the web service
@@ -48,10 +56,13 @@ public class OncokbServiceImpl implements OncokbService {
             // failure fetching external resource
             LOG.error("Failure fetching external resource: " + e.getLocalizedMessage());
         } catch (ResourceMappingException e) {
+            LOG.error(">>> ResourceMappingException");
             throw new OncokbWebServiceException(e.getMessage());
         } catch (HttpClientErrorException e) {
+            LOG.error(">>> HttpClientErrorException");
             throw new OncokbWebServiceException(e.getResponseBodyAsString(), e.getStatusCode());
         } catch (ResourceAccessException e) {
+            LOG.error(">>> ResourceAccessException");
             throw new OncokbWebServiceException(e.getMessage());
         }
 

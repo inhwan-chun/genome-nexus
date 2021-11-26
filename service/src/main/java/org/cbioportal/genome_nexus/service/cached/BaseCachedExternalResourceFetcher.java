@@ -100,6 +100,7 @@ public abstract class BaseCachedExternalResourceFetcher<T, R extends MongoReposi
 
                 // save everything to the cache as a properly parsed JSON
                 if (saveRawValue) {
+                    LOG.info(String.format("[ %s ] => %s", this.collection, id));
                     this.repository.saveDBObject(this.collection, id, rawValue);
                 }
             }

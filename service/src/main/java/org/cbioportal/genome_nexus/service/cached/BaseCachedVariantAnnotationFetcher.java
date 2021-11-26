@@ -49,7 +49,7 @@ public abstract class BaseCachedVariantAnnotationFetcher
     {
         super(collection, repository, type, fetcher, transformer, maxPageSize);
     }
-   
+
     @Override
     protected String extractId(VariantAnnotation instance)
     {
@@ -62,9 +62,11 @@ public abstract class BaseCachedVariantAnnotationFetcher
         return (String)dbObject.get("input");
     }
 
-    @Override 
+    @Override
     public VariantAnnotation fetchAndCache(String id) throws ResourceMappingException
     {
+        LOG.info(String.format("[%s]", id));
+
         VariantAnnotation variantAnnotation = null;
         try {
             variantAnnotation = super.fetchAndCache(id);
@@ -78,11 +80,16 @@ public abstract class BaseCachedVariantAnnotationFetcher
         }
         return variantAnnotation;
     }
-    
+
     @Override
     public List<VariantAnnotation> fetchAndCache(List<String> ids) throws ResourceMappingException
     {
-        Map<String, VariantAnnotation> variantResponse = this.constructFetchedMap(ids); 
+
+        StringBuffer sb = new StringBuffer();
+        ids.stream().forEach(str -> sb.append(str + ","));
+        LOG.info(String.format("[%s]", sb.toString()));
+
+        Map<String, VariantAnnotation> variantResponse = this.constructFetchedMap(ids);
         for (String variantId : variantResponse.keySet()) {
             if (variantResponse.get(variantId) == null) {
                 VariantAnnotation variantAnnotation = new VariantAnnotation(variantId);
@@ -96,7 +103,7 @@ public abstract class BaseCachedVariantAnnotationFetcher
         List<VariantAnnotation> values = new ArrayList();
         for (String id : ids) {
            values.add(variantResponse.get(id));
-        } 
+        }
         return values;
     }
 }
